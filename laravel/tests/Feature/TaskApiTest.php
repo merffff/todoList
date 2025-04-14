@@ -11,9 +11,6 @@ class TaskApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Тест на получение списка задач.
-     */
     public function test_can_get_all_tasks(): void
     {
         Task::factory()->count(3)->create();
