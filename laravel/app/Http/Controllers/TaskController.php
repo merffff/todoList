@@ -3,20 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
-use App\Http\Requests\TaskRequest;
+use App\Http\Requests\CreateTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
-use App\Http\Resources\TaskCollection;
+use Illuminate\Http\JsonResponse;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        $tasks = Task::all();
+        $tasks = Task::latest()->paginate(10);
 
-        return new TaskCollection($tasks);
+        return response()->json([
+            'status' => 'success',
+            'data' => TaskResource::collection($tasks),
+            'meta' => [
+                'current_page' => $tasks->currentPage(),
+                'last_page' => $tasks->lastPage(),
+                'per_page' => $tasks->perPage(),
+                'total' => $tasks->total()
+            ]
+        ]);
     }
 
-    public function store(TaskRequest $request)
+    public function store(CreateTaskRequest $request): JsonResponse
     {
         $task = Task::create($request->validated());
 
@@ -29,13 +39,14 @@ class TaskController extends Controller
             ->setStatusCode(201);
     }
 
-    public function show(Task $task)
+    public function show(Task $task): JsonResponse
     {
         return (new TaskResource($task))
-            ->additional(['status' => 'success']);
+            ->additional(['status' => 'success'])
+            ->response();
     }
 
-    public function update(TaskRequest $request, Task $task)
+    public function update(UpdateTaskRequest $request, Task $task): JsonResponse
     {
         $task->update($request->validated());
 
@@ -43,10 +54,11 @@ class TaskController extends Controller
             ->additional([
                 'status' => 'success',
                 'message' => 'Task updated successfully'
-            ]);
+            ])
+            ->response();
     }
 
-    public function destroy(Task $task)
+    public function destroy(Task $task): JsonResponse
     {
         $task->delete();
 
