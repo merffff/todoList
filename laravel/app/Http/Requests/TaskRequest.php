@@ -7,25 +7,33 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class TaskRequest extends FormRequest
 {
-    /**
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules(): array
     {
-        return [
-            'title' => 'required|string|max:255',
+        $rules = [
             'description' => 'nullable|string',
             'status' => 'sometimes|in:pending,in_progress,completed',
+        ];
+
+        if ($this->isMethod('POST')) {
+            $rules['title'] = 'required|string|max:255';
+        } else {
+            $rules['title'] = 'sometimes|required|string|max:255';
+        }
+
+        return $rules;
+    }
+
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'Название задачи обязательно',
+            'title.max' => 'Название задачи не должно превышать 255 символов',
+            'status.in' => 'Статус должен быть одним из: pending, in_progress, completed',
         ];
     }
 }

@@ -7,7 +7,7 @@ REST API для управления задачами (To-Do List), разраб
 ### 1. Клонирование репозитория
 
 ```bash
-git clone git@github.com:merffff/todoList.git
+git clone https://github.com/your-username/task-api.git
 cd task-api
 ```
 
@@ -26,23 +26,13 @@ docker exec -it task_api_php php artisan config:clear
 
 После запуска, API будет доступно по адресу: `http://localhost/api/tasks`
 
-## Интерфейс пользователя
-
-Веб-интерфейс доступен по адресу: `http://localhost`
-
-В интерфейсе реализованы:
-- Просмотр списка задач с пагинацией (по 10 задач на странице)
-- Создание новых задач
-- Редактирование существующих задач
-- Удаление задач
-
 ## API Endpoints
 
 ### 1. Получение списка задач
 - **URL**: `/api/tasks`
 - **Метод**: `GET`
 - **Заголовки**:
-    - `Accept: application/json`
+  - `Accept: application/json`
 - **Пример ответа**:
   ```json
   {
@@ -64,7 +54,7 @@ docker exec -it task_api_php php artisan config:clear
 - **URL**: `/api/tasks/{id}`
 - **Метод**: `GET`
 - **Заголовки**:
-    - `Accept: application/json`
+  - `Accept: application/json`
 - **Пример ответа**:
   ```json
   {
@@ -84,8 +74,8 @@ docker exec -it task_api_php php artisan config:clear
 - **URL**: `/api/tasks`
 - **Метод**: `POST`
 - **Заголовки**:
-    - `Accept: application/json`
-    - `Content-Type: application/json`
+  - `Accept: application/json`
+  - `Content-Type: application/json`
 - **Тело запроса** (JSON):
   ```json
   {
@@ -114,8 +104,8 @@ docker exec -it task_api_php php artisan config:clear
 - **URL**: `/api/tasks/{id}`
 - **Метод**: `PUT`
 - **Заголовки**:
-    - `Accept: application/json`
-    - `Content-Type: application/json`
+  - `Accept: application/json`
+  - `Content-Type: application/json`
 - **Тело запроса** (JSON):
   ```json
   {
@@ -144,7 +134,7 @@ docker exec -it task_api_php php artisan config:clear
 - **URL**: `/api/tasks/{id}`
 - **Метод**: `DELETE`
 - **Заголовки**:
-    - `Accept: application/json`
+  - `Accept: application/json`
 - **Пример ответа**:
   ```json
   {
@@ -163,7 +153,27 @@ docker exec -it task_api_php php artisan config:clear
 - `docker-compose.yml` - конфигурация Docker-контейнеров
 - `docker/php/Dockerfile` - настройка PHP-контейнера
 - `docker/nginx/default.conf` - конфигурация Nginx
-- `laravel/` - проект Laravel с API и веб-интерфейсом
+- `laravel/` - проект Laravel с API
+
+## Тесты
+
+Проект включает автоматические тесты API:
+
+```bash
+# Запуск всех тестов
+php artisan test
+
+# Запуск конкретного теста
+php artisan test --filter=TaskApiTest
+```
+
+Тесты проверяют:
+- Получение списка задач
+- Получение одной задачи
+- Создание задачи
+- Валидацию данных
+- Обновление задачи
+- Удаление задачи
 
 ## Требования к данным
 

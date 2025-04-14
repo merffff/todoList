@@ -1,10 +1,11 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Models\Task;
-use Illuminate\Http\Request;
+use App\Http\Requests\TaskRequest;
+use App\Http\Resources\TaskResource;
+use App\Http\Resources\TaskCollection;
 
 class TaskController extends Controller
 {
@@ -12,67 +13,39 @@ class TaskController extends Controller
     {
         $tasks = Task::all();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $tasks
-        ]);
+        return new TaskCollection($tasks);
     }
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     */
-    public function store(Request $request)
+    public function store(TaskRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'sometimes|in:pending,in_progress,completed',
-        ]);
+        $task = Task::create($request->validated());
 
-        $task = Task::create($validated);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Task created successfully',
-            'data' => $task
-        ], 201);
+        return (new TaskResource($task))
+            ->additional([
+                'status' => 'success',
+                'message' => 'Task created successfully'
+            ])
+            ->response()
+            ->setStatusCode(201);
     }
 
-    /**
-     * @param \App\Models\Task $task
-     */
     public function show(Task $task)
     {
-        return response()->json([
-            'status' => 'success',
-            'data' => $task
-        ]);
+        return (new TaskResource($task))
+            ->additional(['status' => 'success']);
     }
 
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Task $task
-     */
-    public function update(Request $request, Task $task)
+    public function update(TaskRequest $request, Task $task)
     {
-        $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'sometimes|in:pending,in_progress,completed',
-        ]);
+        $task->update($request->validated());
 
-        $task->update($validated);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Task updated successfully',
-            'data' => $task
-        ]);
+        return (new TaskResource($task))
+            ->additional([
+                'status' => 'success',
+                'message' => 'Task updated successfully'
+            ]);
     }
 
-    /**
-     * @param \App\Models\Task $task
-     */
     public function destroy(Task $task)
     {
         $task->delete();
